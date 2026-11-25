@@ -44,16 +44,16 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
             ${{ steps.meta.outputs.image }}:latest
 
-          deploy:
-           needs: build-and-push
-           runs-on: self-hosted
-          defaults:
-                 run:
-                 shell: powershell
-          steps:
-          - uses: actions/checkout@v4
+    deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@v4
 
-          - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -f k8s/ingress.yaml
           kubectl set image deployment/wisecow wisecow=${{ needs.build-and-push.outputs.image }}:${{ github.sha }}
