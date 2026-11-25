@@ -44,23 +44,16 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
             ${{ steps.meta.outputs.image }}:latest
 
-  deploy:
+    deploy:
     needs: build-and-push
-    runs-on: ubuntu-latest
-    # Runs only if the KUBE_CONFIG secret exists (CD is the challenge goal)
-    if: ${{ vars.ENABLE_DEPLOY == 'true' }}
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
-      - uses: azure/setup-kubectl@v4
-
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      - name: Deploy manifests
+      - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -f k8s/ingress.yaml
           kubectl set image deployment/wisecow wisecow=${{ needs.build-and-push.outputs.image }}:${{ github.sha }}
