@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/wisecow
 
 jobs:
   build-and-push:
@@ -44,7 +43,7 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
             ${{ steps.meta.outputs.image }}:latest
 
-    deploy:
+  deploy:
     needs: build-and-push
     runs-on: self-hosted
     defaults:
