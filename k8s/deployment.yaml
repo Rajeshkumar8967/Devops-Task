@@ -5,7 +5,7 @@ metadata:
   labels:
     app: wisecow
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: wisecow
@@ -16,20 +16,9 @@ spec:
     spec:
       containers:
         - name: wisecow
-          # CI/CD replaces this tag with the commit SHA
-          image: ghcr.io/YOUR_GITHUB_USERNAME/wisecow:latest
+          image: ghcr.io/rajeshkumar8967/wisecow:latest
           ports:
             - containerPort: 4499
-          readinessProbe:
-            tcpSocket:
-              port: 4499
-            initialDelaySeconds: 3
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: 4499
-            initialDelaySeconds: 10
-            periodSeconds: 20
           resources:
             requests:
               cpu: 50m
